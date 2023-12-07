@@ -225,6 +225,7 @@ public class BalanceStatisticController {
                     id, article_id, debit, credit, date, balance_id);
 
 
+
             DataAccessor.getDataAccessor().editRowInOperationTable(node);
         }
         catch (SQLException e) {
