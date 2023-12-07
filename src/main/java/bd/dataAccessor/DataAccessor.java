@@ -107,4 +107,50 @@ public class DataAccessor {
         }
     }
 
+
+    public void addRowInOperationTable(OperationsTableModel data) throws SQLException {
+
+        String sqlRequest = "INSERT INTO operations (article_id, debit, credit, create_date, balance_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setInt(1, data.getArticle_id());
+            preparedStatement.setInt(2, data.getDebit());
+            preparedStatement.setInt(3, data.getCredit());
+            preparedStatement.setTimestamp(4, java.sql.Timestamp.valueOf(data.getDate()));
+            preparedStatement.setInt(5, data.getBalance_id());
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void editRowInOperationTable(OperationsTableModel data) throws SQLException {
+        String sqlRequest = "UPDATE operations SET article_id=?, debit=?, credit=?, create_date=?, balance_id=? WHERE id=?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setInt(6, data.getId());
+            preparedStatement.setInt(1, data.getArticle_id());
+            preparedStatement.setInt(2, data.getDebit());
+            preparedStatement.setInt(3, data.getCredit());
+            System.out.println(java.sql.Timestamp.valueOf(data.getDate()));
+            preparedStatement.setTimestamp(4, java.sql.Timestamp.valueOf(data.getDate()));
+            preparedStatement.setInt(5, data.getBalance_id());
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void deleteRowFromBalanceTable(int id) throws SQLException {
+        String sqlRequest = "DELETE FROM balance WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
+    public void deleteRowFromOperationsTable(int id) throws SQLException {
+        String sqlRequest = "DELETE FROM operations WHERE id=?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setInt(1, id);
+            preparedStatement.executeUpdate();
+        }
+    }
+
 }
