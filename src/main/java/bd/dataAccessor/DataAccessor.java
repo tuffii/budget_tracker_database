@@ -57,10 +57,33 @@ public class DataAccessor {
                     resultSet.getTimestamp("create_date").toLocalDateTime(),
                     resultSet.getInt("balance_id"));
             operationsTableList.add(node);
-            System.out.println(node.toString());
         }
         return operationsTableList;
     }
+
+    public List<OperationsTableModel> getOperationWithIdTable(int balance_id) throws SQLException {
+        String sql = "SELECT * FROM operations WHERE balance_id = ?";
+        List<OperationsTableModel> operationsTableList = new ArrayList<>();
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, balance_id);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                while (resultSet.next()) {
+                    OperationsTableModel node = new OperationsTableModel(
+                            resultSet.getInt("id"),
+                            resultSet.getInt("article_id"),
+                            resultSet.getInt("debit"),
+                            resultSet.getInt("credit"),
+                            resultSet.getTimestamp("create_date").toLocalDateTime(),
+                            resultSet.getInt("balance_id"));
+                    operationsTableList.add(node);
+                }
+            }
+        }
+        return operationsTableList;
+    }
+
+
+
 
 
 

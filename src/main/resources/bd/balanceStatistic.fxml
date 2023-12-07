@@ -6,17 +6,24 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.controllers.BalanceStatisticController">
    <children>
-      <Button layoutX="8.0" layoutY="14.0" mnemonicParsing="false" text="&lt;" />
+      <Button fx:id="back_to_balances" layoutX="8.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToBalances" text="&lt;" />
       <Text layoutX="285.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Statistic for balance № " wrappingWidth="319.373046875">
          <font>
             <Font size="28.0" />
          </font>
       </Text>
-      <TableView fx:id="operations_table" layoutX="33.0" layoutY="44.0" prefHeight="198.0" prefWidth="635.0">
+      <TableView fx:id="operations_table" layoutX="33.0" layoutY="44.0" prefHeight="198.0" prefWidth="619.0">
         <columns>
-          <TableColumn prefWidth="75.0" text="C1" />
-          <TableColumn prefWidth="75.0" text="C2" />
+          <TableColumn prefWidth="75.0" text="id" />
+          <TableColumn prefWidth="75.0" text="article id" />
+            <TableColumn prefWidth="75.0" text="debit" />
+            <TableColumn prefWidth="75.0" text="credit" />
+            <TableColumn prefWidth="75.0" text="create date" />
+            <TableColumn prefWidth="75.0" text="balance id" />
         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
    </children>
 </AnchorPane>
