@@ -82,39 +82,29 @@ public class DataAccessor {
         return operationsTableList;
     }
 
+    public void addRowInBalanceTable(BalancesTableModel data) throws SQLException {
 
-
-
-
-
-    public void addOrEditRowInBalanceTable(BalancesTableModel data) throws SQLException {
-        String sqlRequest;
-        if (data.getId() > 0) {
-            sqlRequest = "UPDATE balance SET create_date=?, debit=?, credit=?, amount=? WHERE id=?";
-        } else {
-            sqlRequest = "INSERT INTO balance (create_date, debit, credit, amount) VALUES (?, ?, ?, ?)";
-        }
+        String sqlRequest = "INSERT INTO balance (create_date, debit, credit, amount) VALUES (?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setTimestamp(1, java.sql.Timestamp.valueOf(data.getDate()));
             preparedStatement.setInt(2, data.getDebit());
             preparedStatement.setInt(3, data.getCredit());
             preparedStatement.setInt(4, data.getAmount());
-
-            if (data.getId() > 0) {
-                // Если это редактирование, установите id для условия WHERE
-                preparedStatement.setInt(5, data.getId());
-            }
-
-            // Выполните запрос
-            System.out.println(preparedStatement.toString());
             preparedStatement.executeUpdate();
         }
     }
 
+    public void editRowInBalanceTable(BalancesTableModel data) throws SQLException {
+        String sqlRequest = "UPDATE balance SET create_date=?, debit=?, credit=?, amount=? WHERE id=?";
 
-
-
-
-
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setTimestamp(1, java.sql.Timestamp.valueOf(data.getDate()));
+            preparedStatement.setInt(2, data.getDebit());
+            preparedStatement.setInt(3, data.getCredit());
+            preparedStatement.setInt(4, data.getAmount());
+            preparedStatement.setInt(5, data.getId());
+            preparedStatement.executeUpdate();
+        }
+    }
 
 }
