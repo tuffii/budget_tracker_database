@@ -5,16 +5,15 @@ import java.time.LocalDateTime;
 public class OperationsTableModel {
 
     private int id;
-    int article_id;
+    private int articleId;
     private int debit;
     private int credit;
     private LocalDateTime date;
-
     private int balance_id;
 
-    public OperationsTableModel(int id, int article_id, int debit, int credit, LocalDateTime date, int balance_id) {
+    public OperationsTableModel(int id, int articleId, int debit, int credit, LocalDateTime date, int balance_id) {
         this.id = id;
-        this.article_id = article_id;
+        this.articleId = articleId;
         this.date = date;
         this.debit = debit;
         this.credit = credit;
@@ -28,10 +27,10 @@ public class OperationsTableModel {
         this.id = id;
     }
     public int getArticle_id() {
-        return article_id;
+        return articleId;
     }
     public void setArticle_id(int article_id) {
-        this.article_id = article_id;
+        this.articleId = article_id;
     }
     public int getDebit() {
         return debit;

@@ -174,6 +174,8 @@ public class NavigationPageController {
             System.out.println(e.getMessage());
             id_statistic_button.setTextFill(Color.RED);
         }
+
+        System.out.println("вызов статистики для id = " + statistic_id);
         controller.setRoot(root, statistic_id);
     }
 

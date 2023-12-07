@@ -1,6 +1,7 @@
 package bd.dataAccessor;
 
 import bd.TableModels.BalancesTableModel;
+import bd.TableModels.OperationsTableModel;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -41,6 +42,26 @@ public class DataAccessor {
         }
         return balancesTableList;
     }
+
+    public List<OperationsTableModel> getOperationTable() throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("select * from operations");
+
+        List<OperationsTableModel> operationsTableList = new ArrayList<>();
+        while (resultSet.next()) {
+            OperationsTableModel node = new OperationsTableModel(
+                    resultSet.getInt("id"),
+                    resultSet.getInt("article_id"),
+                    resultSet.getInt("debit"),
+                    resultSet.getInt("credit"),
+                    resultSet.getTimestamp("create_date").toLocalDateTime(),
+                    resultSet.getInt("balance_id"));
+            operationsTableList.add(node);
+            System.out.println(node.toString());
+        }
+        return operationsTableList;
+    }
+
 
 
     public void addOrEditRowInBalanceTable(BalancesTableModel data) throws SQLException {
