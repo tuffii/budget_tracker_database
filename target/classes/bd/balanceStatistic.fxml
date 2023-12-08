@@ -79,7 +79,7 @@
                <children>
                   <VBox prefHeight="0.0" prefWidth="535.0">
                      <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="     Создать новую операцию" textAlignment="CENTER" wrappingWidth="534.13671875">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="     Изменить операцию" textAlignment="CENTER" wrappingWidth="534.13671875">
                            <font>
                               <Font size="17.0" />
                            </font>

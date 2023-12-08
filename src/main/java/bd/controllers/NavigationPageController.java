@@ -3,6 +3,7 @@ import bd.Main;
 import bd.TableModels.BalancesTableModel;
 import bd.dataAccessor.DataAccessor;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,6 +31,10 @@ public class NavigationPageController {
      * Переданная root страница
      */
     private static Stage root;
+
+    @FXML
+    public Button statistic_button;
+
     public void setRoot(Stage root) {
         create_balance_window.setVisible(false);
         clearInForm();
@@ -298,6 +303,17 @@ public class NavigationPageController {
 
         System.out.println("вызов статистики для id = " + statistic_id);
         controller.setRoot(root, statistic_id);
+    }
+
+    public void statisticButtonOnAction() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("graphStatistic.fxml"));
+
+        AnchorPane rootLayout = fxmlLoader.load();
+        Scene scene = new Scene(rootLayout, GraphStatisticController.GRAPH_STATISTIC_PAGE_W,
+                GraphStatisticController.GRAPH_STATISTIC_PAGE_H);
+        root.setScene(scene);
+        GraphStatisticController controller = fxmlLoader.getController();
+        controller.setRoot(root);
     }
 
     //TODO окно со всеми курсорами, тригерами и хранимыми процедурами. возможностью их отключить и включить

@@ -99,5 +99,6 @@
             </HBox>
          </header>
       </DialogPane>
+      <Button fx:id="statistic_button" layoutX="748.0" layoutY="519.0" mnemonicParsing="false" onAction="#statisticButtonOnAction" prefHeight="25.0" prefWidth="116.0" text="статистика" />
    </children>
 </AnchorPane>

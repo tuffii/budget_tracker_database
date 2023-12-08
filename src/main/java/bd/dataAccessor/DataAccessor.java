@@ -1,5 +1,6 @@
 package bd.dataAccessor;
 
+import bd.TableModels.ArticlesTableModel;
 import bd.TableModels.BalancesTableModel;
 import bd.TableModels.OperationsTableModel;
 
@@ -152,5 +153,26 @@ public class DataAccessor {
             preparedStatement.executeUpdate();
         }
     }
+
+
+
+    public List<ArticlesTableModel> getStates() throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("select * from articles");
+
+        List<ArticlesTableModel> articlesTableList = new ArrayList<>();
+        while (resultSet.next()) {
+            ArticlesTableModel node = new ArticlesTableModel(
+                    resultSet.getInt("id"),
+                    resultSet.getString("name"));
+            articlesTableList.add(node);
+        }
+        return articlesTableList;
+    }
+
+
+
+
+
 
 }
