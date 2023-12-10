@@ -6,7 +6,12 @@ import bd.TableModels.CursorDataOutput;
 import bd.TableModels.OperationsTableModel;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DataAccessor {
@@ -269,34 +274,80 @@ public class DataAccessor {
     }
 
 
-    public List<CursorDataOutput> calculateFinancialPercentage(String startDate, String endDate, String[] ids, String type) throws SQLException {
-        // Проверки на доступ к выполнению процедуры
-        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("execute")) {
-            throw new SQLException("У вас нет доступа к выполнению процедуры");
-        }
-
-        try (CallableStatement callableStatement = connection.prepareCall("{CALL calculate_financial_percentage(?, ?, ?, ?, ?)}")) {
-            callableStatement.setString(1, startDate);
-            callableStatement.setString(2, endDate);
-            callableStatement.setArray(3, connection.createArrayOf("VARCHAR", ids));
-            callableStatement.setString(4, type);
-            callableStatement.registerOutParameter(5, Types.OTHER); // Тип курсора
-
-            callableStatement.execute();
-
-            // Получение результата из курсора
-            try (ResultSet resultSet = (ResultSet) callableStatement.getObject(5)) {
-                List<CursorDataOutput> resultList = new ArrayList<>();
-                while (resultSet.next()) {
-                    // Создание объекта YourResultClass и добавление в список
-                    CursorDataOutput result = new CursorDataOutput(
-                            resultSet.getInt("article_id"),
-                            resultSet.getDouble("financial_percentage"));
-                    resultList.add(result);
+    public static String calculateFinancialPercentage(
+            Timestamp start_date,
+            Timestamp end_date,
+            int[] article_ids,
+            String flow_type) throws SQLException {
+        try {
+            // Calculate total flow for selected articles
+            double totalFlow = 0.0;
+            String totalFlowQuery = "SELECT COALESCE(SUM(CASE " +
+                    "WHEN ? = 'debit' THEN o.debit " +
+                    "WHEN ? = 'credit' THEN o.credit " +
+                    "WHEN ? = 'amount' THEN b.amount " +
+                    "ELSE 0 " +
+                    "END), 0) " +
+                    "AS total_flow " +
+                    "FROM balance b " +
+                    "LEFT JOIN operations o ON o.balance_id = b.id " +
+                    "WHERE b.create_date BETWEEN ? AND ? " +
+                    "AND o.article_id IN (" + String.join(",", Arrays.stream(article_ids).mapToObj(String::valueOf).toArray(String[]::new)) + ")";
+            try (PreparedStatement totalFlowStatement = DataAccessor.dataAccessor.connection.prepareStatement(totalFlowQuery)) {
+                totalFlowStatement.setString(1, flow_type);
+                totalFlowStatement.setString(2, flow_type);
+                totalFlowStatement.setString(3, flow_type);
+                totalFlowStatement.setTimestamp(4, start_date);
+                totalFlowStatement.setTimestamp(5, end_date);
+                try (ResultSet totalFlowResult = totalFlowStatement.executeQuery()) {
+                    if (totalFlowResult.next()) {
+                        totalFlow = totalFlowResult.getDouble("total_flow");
+                    }
                 }
-                return resultList;
             }
+
+            // Calculate financial percentage for each article
+            StringBuilder resultStringBuilder = new StringBuilder();
+            for (int article_id_param : article_ids) {
+                String articlePercentageQuery = "SELECT COALESCE(SUM(CASE " +
+                        "WHEN ? = 'debit' THEN o.debit " +
+                        "WHEN ? = 'credit' THEN o.credit " +
+                        "WHEN ? = 'amount' THEN b.amount " +
+                        "ELSE 0 " +
+                        "END), 0) / ? * 100 " +
+                        "AS financial_percentage " +
+                        "FROM operations o " +
+                        "LEFT JOIN balance b ON o.balance_id = b.id " +
+                        "WHERE o.article_id = ? " +
+                        "AND b.create_date BETWEEN ? AND ?";
+                try (PreparedStatement articlePercentageStatement = DataAccessor.dataAccessor.connection.prepareStatement(articlePercentageQuery)) {
+                    articlePercentageStatement.setString(1, flow_type);
+                    articlePercentageStatement.setString(2, flow_type);
+                    articlePercentageStatement.setString(3, flow_type);
+                    articlePercentageStatement.setDouble(4, totalFlow);
+                    articlePercentageStatement.setInt(5, article_id_param);
+                    articlePercentageStatement.setTimestamp(6, start_date);
+                    articlePercentageStatement.setTimestamp(7, end_date);
+                    try (ResultSet articlePercentageResult = articlePercentageStatement.executeQuery()) {
+                        if (articlePercentageResult.next()) {
+                            double financialPercentage = articlePercentageResult.getDouble("financial_percentage");
+                            resultStringBuilder.append(String.format("Article ID %d: Financial Percentage = %f\n", article_id_param, financialPercentage));
+                        }
+                    }
+                }
+            }
+            return resultStringBuilder.toString();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error occurred while calculating financial percentage.");
         }
     }
+
+
+
+
+
+
+
 
 }
