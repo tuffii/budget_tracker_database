@@ -35,6 +35,8 @@ public class NavigationPageController {
     @FXML
     public Button statistic_button;
 
+    private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
     public void setRoot(Stage root) {
         create_balance_window.setVisible(false);
         clearInForm();
@@ -61,6 +63,10 @@ public class NavigationPageController {
                 });
             }
         } catch (SQLException e) {
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
             System.out.println(e.getMessage());
         }
     }
@@ -102,6 +108,10 @@ public class NavigationPageController {
             initializeTable();
         }
         catch (SQLException e) {
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
             System.out.println(e.getMessage());
         }
     }
@@ -116,6 +126,10 @@ public class NavigationPageController {
             initializeTable();
         }
         catch (SQLException e) {
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
             System.out.println(e.getMessage());
         }
     }

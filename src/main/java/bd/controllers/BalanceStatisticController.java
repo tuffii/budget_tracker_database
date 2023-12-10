@@ -78,6 +78,8 @@ public class BalanceStatisticController {
     @FXML
     private Button delete_operation_button;
 
+    private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
 
     int this_page_balance_id = 0;
 
@@ -102,6 +104,10 @@ public class BalanceStatisticController {
                 });
             }
         } catch(SQLException e) {
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
             System.out.println(e.getMessage());
         }
     }
@@ -204,7 +210,7 @@ public class BalanceStatisticController {
         catch (SQLException e) {
             deleteOperationAlert.setTitle("Предупреждение");
             deleteOperationAlert.setHeaderText("");
-            deleteOperationAlert.setContentText(e.getMessage().substring(0, e.getMessage().indexOf("Где")));
+            deleteOperationAlert.setContentText(e.getMessage());
             deleteOperationAlert.showAndWait();
             System.out.println(e.getMessage());
         }

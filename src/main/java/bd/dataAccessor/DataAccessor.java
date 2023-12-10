@@ -2,6 +2,7 @@ package bd.dataAccessor;
 
 import bd.TableModels.ArticlesTableModel;
 import bd.TableModels.BalancesTableModel;
+import bd.TableModels.CursorDataOutput;
 import bd.TableModels.OperationsTableModel;
 
 import java.sql.*;
@@ -28,6 +29,11 @@ public class DataAccessor {
     };
 
     public List<BalancesTableModel> getBalanceTable() throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from balance");
 
@@ -45,6 +51,11 @@ public class DataAccessor {
     }
 
     public List<OperationsTableModel> getOperationTable() throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from operations");
 
@@ -63,6 +74,11 @@ public class DataAccessor {
     }
 
     public List<OperationsTableModel> getOperationWithIdTable(int balance_id) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
         String sql = "SELECT * FROM operations WHERE balance_id = ?";
         List<OperationsTableModel> operationsTableList = new ArrayList<>();
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
@@ -85,6 +101,10 @@ public class DataAccessor {
 
     public void addRowInBalanceTable(BalancesTableModel data) throws SQLException {
 
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
         String sqlRequest = "INSERT INTO balance (create_date, debit, credit, amount) VALUES (?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setTimestamp(1, java.sql.Timestamp.valueOf(data.getDate()));
@@ -96,6 +116,10 @@ public class DataAccessor {
     }
 
     public void editRowInBalanceTable(BalancesTableModel data) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к изменению БД");
+        }
         String sqlRequest = "UPDATE balance SET create_date=?, debit=?, credit=?, amount=? WHERE id=?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
@@ -111,6 +135,10 @@ public class DataAccessor {
 
     public void addRowInOperationTable(OperationsTableModel data) throws SQLException {
 
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к изменению БД");
+        }
+
         String sqlRequest = "INSERT INTO operations (article_id, debit, credit, create_date, balance_id) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setInt(1, data.getArticle_id());
@@ -123,6 +151,11 @@ public class DataAccessor {
     }
 
     public void editRowInOperationTable(OperationsTableModel data) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к изменению БД");
+        }
+
         String sqlRequest = "UPDATE operations SET article_id=?, debit=?, credit=?, create_date=?, balance_id=? WHERE id=?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
             preparedStatement.setInt(6, data.getId());
@@ -137,6 +170,11 @@ public class DataAccessor {
     }
 
     public void deleteRowFromBalanceTable(int id) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к изменению БД");
+        }
+
         String sqlRequest = "DELETE FROM balance WHERE id=?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
@@ -146,6 +184,11 @@ public class DataAccessor {
     }
 
     public void deleteRowFromOperationsTable(int id) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("у вас нет доступа к изменению БД");
+        }
+
         String sqlRequest = "DELETE FROM operations WHERE id=?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
@@ -156,7 +199,12 @@ public class DataAccessor {
 
 
 
-    public List<ArticlesTableModel> getStates() throws SQLException {
+    public List<ArticlesTableModel> getStatesTable() throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from articles");
 
@@ -170,9 +218,85 @@ public class DataAccessor {
         return articlesTableList;
     }
 
+    public int getStateIdFromName(String stateName) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("у вас нет доступа к чтению БД");
+        }
+
+        String sqlRequest = "SELECT id FROM articles WHERE name=?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, stateName);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("id");
+                } else {
+                    throw new SQLException("Статья с именем " + stateName + " не найдена.");
+                }
+            }
+        }
+    }
 
 
+    /**
+     * Метод для получения пароля по имени пользователя
+      */
+    public String getPassword(String username) throws SQLException {
+        String sqlRequest = "SELECT password FROM users WHERE username=?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, username);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("password");
+                } else {
+                    throw new SQLException("Пользователь с именем " + username + " не найден.");
+                }
+            }
+        }
+    }
+
+    // Метод для создания новой записи пользователя
+    public void createUser(String username, String password) throws SQLException {
+        String sqlRequest = "INSERT INTO users (username, password) VALUES (?, ?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, password);
+            // Выполнение оператора INSERT
+            preparedStatement.executeUpdate();
+            System.out.println("Пользователь успешно создан.");
+        }
+    }
 
 
+    public List<CursorDataOutput> calculateFinancialPercentage(String startDate, String endDate, String[] ids, String type) throws SQLException {
+        // Проверки на доступ к выполнению процедуры
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("execute")) {
+            throw new SQLException("У вас нет доступа к выполнению процедуры");
+        }
+
+        try (CallableStatement callableStatement = connection.prepareCall("{CALL calculate_financial_percentage(?, ?, ?, ?, ?)}")) {
+            callableStatement.setString(1, startDate);
+            callableStatement.setString(2, endDate);
+            callableStatement.setArray(3, connection.createArrayOf("VARCHAR", ids));
+            callableStatement.setString(4, type);
+            callableStatement.registerOutParameter(5, Types.OTHER); // Тип курсора
+
+            callableStatement.execute();
+
+            // Получение результата из курсора
+            try (ResultSet resultSet = (ResultSet) callableStatement.getObject(5)) {
+                List<CursorDataOutput> resultList = new ArrayList<>();
+                while (resultSet.next()) {
+                    // Создание объекта YourResultClass и добавление в список
+                    CursorDataOutput result = new CursorDataOutput(
+                            resultSet.getInt("article_id"),
+                            resultSet.getDouble("financial_percentage"));
+                    resultList.add(result);
+                }
+                return resultList;
+            }
+        }
+    }
 
 }

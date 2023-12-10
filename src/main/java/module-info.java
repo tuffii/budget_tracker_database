@@ -6,6 +6,7 @@ module com.example.bd_1 {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
     requires java.sql;
+    requires jbcrypt;
 
     opens bd to javafx.fxml;
     exports bd;

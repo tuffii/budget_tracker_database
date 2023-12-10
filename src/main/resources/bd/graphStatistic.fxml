@@ -1,40 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Text?>
-
-
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.CheckComboBox?>
-<?import javafx.collections.FXCollections?>
-<?import java.lang.String?>
+
 <AnchorPane prefHeight="580" prefWidth="890" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.controllers.GraphStatisticController">
    <children>
-      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" text="&lt;" />
-      <ComboBox layoutX="27.0" layoutY="57.0" prefWidth="150.0" promptText="выберите статью" />
-      <TextField layoutX="224.0" layoutY="57.0" promptText="YYY:DD::MMThh:mm" />
-      <TextField layoutX="224.0" layoutY="91.0" promptText="YYY:DD::MMThh:mm" />
-      <ComboBox layoutX="27.0" layoutY="91.0" prefWidth="150.0" promptText="выберите баланс" />
+      <Button fx:id="back_to_main" layoutX="27.0" layoutY="20.0" mnemonicParsing="false" text="&lt;" onAction="#goToMain" />
+      <TextField fx:id="inputTimeFrom" layoutX="224.0" layoutY="57.0" promptText="YYY:DD::MMThh:mm" />
+      <TextField fx:id="inputTimeTo" layoutX="224.0" layoutY="91.0" promptText="YYY:DD::MMThh:mm" />
       <Text layoutX="192.0" layoutY="74.0" strokeType="OUTSIDE" strokeWidth="0.0" text="от" textAlignment="CENTER" wrappingWidth="25.0" />
       <Text layoutX="192.0" layoutY="108.0" strokeType="OUTSIDE" strokeWidth="0.0" text="до" textAlignment="CENTER" wrappingWidth="25.0" />
 
-      <HBox layoutX="14.0" layoutY="14.0" spacing="10.0">
-         <children>
-            <CheckComboBox>
-               <items>
-                  <FXCollections fx:factory="observableArrayList">
-                     <String fx:value="Вариант 1"/>
-                  </FXCollections>
-                  <FXCollections fx:factory="observableArrayList">
-                     <String fx:value="Вариант 2"/>
-                  </FXCollections>
-               </items>
-            </CheckComboBox>
-         </children>
-      </HBox>
+      <HBox layoutX="14.0" layoutY="14.0" spacing="10.0" />
+      <CheckComboBox fx:id="articlesCheckBox" layoutX="27.0" layoutY="57.0" prefHeight="25.0" prefWidth="150.0" title="выберите статьи" />
+      <CheckComboBox fx:id="balancesCheckBox" layoutX="27.0" layoutY="91.0" prefHeight="25.0" prefWidth="150.0" title="выберите балансы" />
 
    </children>
 </AnchorPane>
