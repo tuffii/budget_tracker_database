@@ -2,7 +2,7 @@ package bd.TableModels;
 
 import java.time.LocalDateTime;
 
-public class OperationsTableModel {
+public class OperationsTableModel extends BaseTableModel {
 
     private int id;
     private int articleId;
@@ -55,6 +55,16 @@ public class OperationsTableModel {
     }
     public void setBalance_id(int balance_id) {
         this.balance_id = balance_id;
+    }
+
+    @Override
+    public String getCsvHeader() {
+        return "ID,ArticleId,Debit,Credit,Date,BalanceId";
+    }
+
+    @Override
+    public String toCsvString() {
+        return getId() + "," + getArticle_id() + "," + getDebit() + "," + getCredit() + "," + getDate() + "," + getBalance_id();
     }
 }
 

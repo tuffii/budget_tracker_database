@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 /**
  * Класс описывающий структуру таблицы Balances
  */
-public class BalancesTableModel {
+public class BalancesTableModel extends BaseTableModel {
     private int id;
     private LocalDateTime date;
     private int debit;
@@ -49,5 +49,15 @@ public class BalancesTableModel {
     }
     public void setAmount(int amount) {
         this.amount = amount;
+    }
+
+    @Override
+    public String getCsvHeader() {
+        return "ID,Date,Debit,Credit,Amount";
+    }
+
+    @Override
+    public String toCsvString() {
+        return getId() + "," + getDate() + "," + getDebit() + "," + getCredit() + "," + getAmount();
     }
 }

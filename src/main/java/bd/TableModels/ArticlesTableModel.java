@@ -2,7 +2,7 @@ package bd.TableModels;
 
 import java.time.LocalDateTime;
 
-public class ArticlesTableModel {
+public class ArticlesTableModel extends BaseTableModel {
     private int id;
     private String name;
 
@@ -21,5 +21,15 @@ public class ArticlesTableModel {
     }
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getCsvHeader() {
+        return "ID,Name";
+    }
+
+    @Override
+    public String toCsvString() {
+        return getId() + "," + getName();
     }
 }

@@ -7,11 +7,6 @@
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="590.0" prefWidth="890.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.controllers.BalanceStatisticController">
    <children>
       <Button fx:id="back_to_balances" layoutX="8.0" layoutY="14.0" mnemonicParsing="false" onAction="#goToBalances" text="&lt;" />
-      <Text fx:id="text_number_balance" layoutX="285.0" layoutY="37.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Statistic for balance № " wrappingWidth="319.373046875">
-         <font>
-            <Font size="28.0" />
-         </font>
-      </Text>
       <TableView fx:id="operations_table" layoutX="33.0" layoutY="44.0" prefHeight="259.0" prefWidth="752.0">
         <columns>
           <TableColumn prefWidth="75.0" text="id" />

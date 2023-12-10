@@ -53,8 +53,6 @@ public class BalanceStatisticController {
     @FXML
     public Button close_change_operation_pane_button;
     @FXML
-    public Text text_number_balance;
-    @FXML
     private Button clear_create_new_operation_data;
     @FXML
     private Button confirm_create_new_operation;
@@ -93,7 +91,6 @@ public class BalanceStatisticController {
     public void setRoot(Stage root, int this_page_balance_id) {
         BalanceStatisticController.root = root;
         this.this_page_balance_id = this_page_balance_id;
-        text_number_balance.setText("Операции по балансу № " + this_page_balance_id);
         initializeTable();
     }
 
@@ -139,12 +136,12 @@ public class BalanceStatisticController {
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         dateColumn.setEditable(true);
 
-//        TableColumn<OperationsTableModel, Integer> balance_Id_Column = new TableColumn<>("balance id");
-//        balance_Id_Column.setCellValueFactory(new PropertyValueFactory<>("balance_id"));
-//        balance_Id_Column.setEditable(true);
+        TableColumn<OperationsTableModel, Integer> balance_Id_Column = new TableColumn<>("balance id");
+        balance_Id_Column.setCellValueFactory(new PropertyValueFactory<>("balance_id"));
+        balance_Id_Column.setEditable(true);
 
         operations_table.getColumns().addAll(Arrays.asList(idColumn, articleIdColumn, debitColumn,
-                creditColumn, dateColumn /*, balance_Id_Column*/));
+                creditColumn, dateColumn, balance_Id_Column));
     }
 
     @FXML

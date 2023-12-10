@@ -2,6 +2,7 @@ package bd.controllers;
 import bd.Main;
 import bd.TableModels.BalancesTableModel;
 import bd.dataAccessor.DataAccessor;
+import bd.dataAccessor.DataExporter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -36,7 +37,10 @@ public class MainPageController {
     public Button statistic_button;
 
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    @FXML
     public Button go_to_articles_button;
+    @FXML
+    public Button save_in_file_button;
 
     public void setRoot(Stage root) {
         create_balance_window.setVisible(false);
@@ -310,6 +314,9 @@ public class MainPageController {
         BalanceStatisticController controller = fxmlLoader.getController();
         int statistic_id = 0;
         try {
+            if (balance_statistic_id.getText().isEmpty()) {
+                throw new RuntimeException("введите корректный id");
+            }
             statistic_id = Integer.parseInt(balance_statistic_id.getText());
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -341,17 +348,20 @@ public class MainPageController {
         controller.setRoot(root);
     }
 
-    //TODO окно со всеми курсорами, тригерами и хранимыми процедурами. возможностью их отключить и включить
-
-    //TODO в статистике выбор сортировки по state
-    //TODO диаграмма круговая по статьям в рамках одного баланса
-    //TODO графики расходов и доходов в рамках одного баланса, одной статьи
-
-    //TODO график общей чистой прибыли и в рамках одного баланса
-
-    //(отдельная вкладка статистики с выбором по каким критериям отображать и туда все графики
-    // выбор все статьи или определенные
-    // выбор все балансы или определенные
-    // выбор за временной период)
-    //
+    @FXML
+    public void saveInFileOnAction() {
+        try {
+            DataExporter.exportDataInFile();
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("Экспорт данных");
+            alert.setContentText("Данные успешно экспортированы");
+            alert.showAndWait();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            alert.setTitle("Предупреждение");
+            alert.setHeaderText("Экспорт данных");
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }
+    }
 }
