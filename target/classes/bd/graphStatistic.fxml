@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 <?import org.controlsfx.control.*?>
 
-<AnchorPane prefHeight="580" prefWidth="890" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.controllers.GraphStatisticController">
+<AnchorPane prefHeight="580" prefWidth="890" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="bd.controllers.CursorController">
    <children>
       <Button fx:id="back_to_main" layoutX="27.0" layoutY="20.0" mnemonicParsing="false" onAction="#goToMain" text="&lt;" />
       <TextField fx:id="inputTimeFrom" layoutX="224.0" layoutY="57.0" promptText="YYY:DD::MMThh:mm" />
@@ -15,10 +16,13 @@
 
       <HBox layoutX="14.0" layoutY="14.0" spacing="10.0" />
       <CheckComboBox fx:id="articlesCheckBox" layoutX="27.0" layoutY="57.0" prefHeight="25.0" prefWidth="150.0" title="выберите статьи" />
-      <CheckComboBox fx:id="balancesCheckBox" layoutX="27.0" layoutY="217.0" prefHeight="25.0" prefWidth="150.0" title="выберите балансы" />
+      <CheckComboBox fx:id="balancesCheckBox" layoutX="27.0" layoutY="217.0" prefHeight="25.0" prefWidth="150.0" title="выберите балансы" visible="false"/>
       <ComboBox fx:id="selectType" layoutX="27.0" layoutY="91.0" prefHeight="25.0" prefWidth="150.0" />
       <Button fx:id="call_cursor_button" layoutX="389.0" layoutY="91.0" mnemonicParsing="false" onAction="#callCursor" prefHeight="25.0" prefWidth="88.0" text="Call cursor" />
       <TextArea fx:id="cursor_output_page" editable="false" layoutX="501.0" layoutY="16.0" prefHeight="200.0" prefWidth="375.0" />
+
+
+      <PieChart fx:id="pieChart" layoutX="50.0" layoutY="189.0" prefHeight="377.0" prefWidth="477.0" />
 
    </children>
 </AnchorPane>

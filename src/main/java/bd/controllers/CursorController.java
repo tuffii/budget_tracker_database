@@ -5,6 +5,7 @@ import bd.TableModels.ArticlesTableModel;
 import bd.TableModels.BalancesTableModel;
 import bd.dataAccessor.DataAccessor;
 import bd.dataAccessor.DataFormater;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -21,12 +22,14 @@ import org.controlsfx.control.CheckComboBox;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-public class GraphStatisticController {
+public class CursorController {
 
     public static final int GRAPH_STATISTIC_PAGE_W = 890;
     public static final int GRAPH_STATISTIC_PAGE_H = 580;
@@ -52,9 +55,11 @@ public class GraphStatisticController {
     public Button call_cursor_button;
     @FXML
     public TextArea cursor_output_page;
+    @FXML
+    public PieChart pieChart;
 
     public void setRoot(Stage root) {
-        GraphStatisticController.root = root;
+        CursorController.root = root;
         initialize();
     }
 
@@ -120,6 +125,27 @@ public class GraphStatisticController {
 
     }
 
+
+    private void initializePieChart(Map<Integer, Double> pieData_id_value) {
+        pieChart.getData().clear();
+//        try {
+            pieData_id_value.forEach((key, value) -> {
+                try {
+                    String name = DataAccessor.getDataAccessor().getStateNameFromId(key);
+                    System.out.println(name + " " + value);
+                    Platform.runLater( () ->{
+                            pieChart.getData().add(new PieChart.Data(name, value));
+                            });
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        pieData_id_value.clear();
+    }
+
+
+
     private void initializeTypeCheckBox() {
         selectType.getItems().addAll("debit", "credit", "amount");
     }
@@ -131,10 +157,10 @@ public class GraphStatisticController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("navigationPage.fxml"));
 
         AnchorPane rootLayout = fxmlLoader.load();
-        Scene scene = new Scene(rootLayout, NavigationPageController.NAVIGATION_PAGE_W,
-                NavigationPageController.NAVIGATION_PAGE_H);
+        Scene scene = new Scene(rootLayout, MainPageController.NAVIGATION_PAGE_W,
+                MainPageController.NAVIGATION_PAGE_H);
         root.setScene(scene);
-        NavigationPageController controller = fxmlLoader.getController();
+        MainPageController controller = fxmlLoader.getController();
         controller.setRoot(root);
 
     }
@@ -142,7 +168,7 @@ public class GraphStatisticController {
     @FXML
     public void callCursor() {
         try {
-            if (selectType.getItems().isEmpty() || selectedArticlesId.isEmpty()) {
+            if (selectType.getSelectionModel().isEmpty() || selectedArticlesId.isEmpty()) {
                 throw new IllegalArgumentException("не все данные выбраны");
             }
             Timestamp start_date = DataFormater.convertStringToTimestamp(inputTimeFrom.getText());
@@ -162,6 +188,13 @@ public class GraphStatisticController {
 
             String result = (DataAccessor.calculateFinancialPercentage(start_date, end_date, articleIds, type));
             cursor_output_page.setText(result);
+
+            Map<Integer, Double> pieData = parseFinancialData(result);
+            System.out.println(result);
+            System.out.println("\n" + pieData.toString());
+            initializePieChart(pieData);
+
+
         } catch (IllegalArgumentException e) {
             cursor_output_page.clear();
             alert.setTitle("Предупреждение");
@@ -174,6 +207,34 @@ public class GraphStatisticController {
             alert.setHeaderText("");
             alert.setContentText(e.getMessage());
             alert.showAndWait();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
+
+    public static Map<Integer, Double> parseFinancialData(String text) {
+        Map<Integer, Double> financialDataMap = new HashMap<>();
+
+        // Паттерн для поиска строк вида "Article ID %d: Financial Percentage = %f\n"
+        String patternString = "Article ID (\\d+): Financial Percentage = (\\d+([.,]\\d+)?)";
+        Pattern pattern = Pattern.compile(patternString);
+        Matcher matcher = pattern.matcher(text);
+
+        // Используем DecimalFormat с учетом локали для правильного парсинга чисел
+        DecimalFormat decimalFormat = new DecimalFormat();
+        decimalFormat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.getDefault()));
+
+        // Поиск и обработка совпадений
+        while (matcher.find()) {
+            int id = Integer.parseInt(matcher.group(1));
+            String percentageStr = matcher.group(2).replace(',', '.'); // Заменяем запятую на точку
+            double percentage = Double.parseDouble(percentageStr);
+            financialDataMap.put(id, percentage);
+        }
+
+        return financialDataMap;
+    }
+
+
+
 }

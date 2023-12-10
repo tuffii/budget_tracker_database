@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -52,6 +53,8 @@ public class BalanceStatisticController {
     @FXML
     public Button close_change_operation_pane_button;
     @FXML
+    public Text text_number_balance;
+    @FXML
     private Button clear_create_new_operation_data;
     @FXML
     private Button confirm_create_new_operation;
@@ -90,6 +93,7 @@ public class BalanceStatisticController {
     public void setRoot(Stage root, int this_page_balance_id) {
         BalanceStatisticController.root = root;
         this.this_page_balance_id = this_page_balance_id;
+        text_number_balance.setText("Операции по балансу № " + this_page_balance_id);
         initializeTable();
     }
 
@@ -135,12 +139,12 @@ public class BalanceStatisticController {
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
         dateColumn.setEditable(true);
 
-        TableColumn<OperationsTableModel, Integer> balance_Id_Column = new TableColumn<>("balance id");
-        balance_Id_Column.setCellValueFactory(new PropertyValueFactory<>("balance_id"));
-        balance_Id_Column.setEditable(true);
+//        TableColumn<OperationsTableModel, Integer> balance_Id_Column = new TableColumn<>("balance id");
+//        balance_Id_Column.setCellValueFactory(new PropertyValueFactory<>("balance_id"));
+//        balance_Id_Column.setEditable(true);
 
         operations_table.getColumns().addAll(Arrays.asList(idColumn, articleIdColumn, debitColumn,
-                creditColumn, dateColumn, balance_Id_Column));
+                creditColumn, dateColumn /*, balance_Id_Column*/));
     }
 
     @FXML
@@ -148,10 +152,10 @@ public class BalanceStatisticController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("navigationPage.fxml"));
 
         AnchorPane rootLayout = fxmlLoader.load();
-        Scene scene = new Scene(rootLayout, NavigationPageController.NAVIGATION_PAGE_W,
-                NavigationPageController.NAVIGATION_PAGE_H);
+        Scene scene = new Scene(rootLayout, MainPageController.NAVIGATION_PAGE_W,
+                MainPageController.NAVIGATION_PAGE_H);
         root.setScene(scene);
-        NavigationPageController controller = fxmlLoader.getController();
+        MainPageController controller = fxmlLoader.getController();
         controller.setRoot(root);
     }
 

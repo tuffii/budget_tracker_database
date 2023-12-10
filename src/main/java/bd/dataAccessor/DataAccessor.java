@@ -203,7 +203,6 @@ public class DataAccessor {
     }
 
 
-
     public List<ArticlesTableModel> getStatesTable() throws SQLException {
 
         if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
@@ -241,6 +240,86 @@ public class DataAccessor {
             }
         }
     }
+
+    public String getStateNameFromId(int stateId) throws SQLException {
+
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("read")) {
+            throw new SQLException("У вас нет доступа к чтению БД");
+        }
+
+        String sqlRequest = "SELECT name FROM articles WHERE id=?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sqlRequest)) {
+            preparedStatement.setInt(1, stateId);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getString("name");
+                } else {
+                    throw new SQLException("Статья с ID " + stateId + " не найдена.");
+                }
+            }
+        }
+    }
+
+
+
+    public void createNewState(String stateName) throws SQLException {
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("У вас нет доступа к редактированию БД");
+        }
+
+        String insertQuery = "INSERT INTO articles (name) VALUES (?)";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+
+            preparedStatement.setString(1, stateName);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new SQLException("Ошибка при добавлении строки в таблицу.");
+        }
+    }
+
+    public void updateStateName(int stateId, String newStateName) throws SQLException {
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("У вас нет доступа к редактированию БД");
+        }
+        String updateQuery = "UPDATE articles SET name = ? WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(updateQuery)) {
+            preparedStatement.setString(1, newStateName);
+            preparedStatement.setInt(2, stateId);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated == 0) {
+                throw new SQLException("Запись с указанным id не найдена.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+
+    public void deleteStateById(int stateId) throws SQLException {
+        if (!UserRole.getIsAdmin() && !UserRole.userRoleAccess.get("write")) {
+            throw new SQLException("У вас нет доступа к редактированию БД");
+        }
+
+        String deleteQuery = "DELETE FROM articles WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
+
+            preparedStatement.setInt(1, stateId);
+            int rowsDeleted = preparedStatement.executeUpdate();
+
+            if (rowsDeleted == 0) {
+                throw new SQLException("Запись с указанным id не найдена.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException(e.getMessage());
+        }
+    }
+
+
 
 
     /**
@@ -338,8 +417,7 @@ public class DataAccessor {
             }
             return resultStringBuilder.toString();
         } catch (SQLException e) {
-            e.printStackTrace();
-            throw new SQLException("Error occurred while calculating financial percentage.");
+            throw new SQLException("Не достаточно данных для составления статистики, либо не верные входные данные");
         }
     }
 

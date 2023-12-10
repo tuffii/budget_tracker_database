@@ -82,10 +82,10 @@ public class RegistrationController {
     private void goToMainPage() throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("navigationPage.fxml"));
         AnchorPane rootLayout = fxmlLoader.load();
-        Scene scene = new Scene(rootLayout, NavigationPageController.NAVIGATION_PAGE_W,
-                NavigationPageController.NAVIGATION_PAGE_H);
+        Scene scene = new Scene(rootLayout, MainPageController.NAVIGATION_PAGE_W,
+                MainPageController.NAVIGATION_PAGE_H);
         root.setScene(scene);
-        NavigationPageController controller = fxmlLoader.getController();
+        MainPageController controller = fxmlLoader.getController();
         controller.setRoot(root);
     }
 

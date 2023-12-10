@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
-public class NavigationPageController {
+public class MainPageController {
 
     /**
      * параметры окна балансов
@@ -36,11 +36,12 @@ public class NavigationPageController {
     public Button statistic_button;
 
     private final Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    public Button go_to_articles_button;
 
     public void setRoot(Stage root) {
         create_balance_window.setVisible(false);
         clearInForm();
-        NavigationPageController.root = root;
+        MainPageController.root = root;
         initializeTable();
     }
 
@@ -323,10 +324,20 @@ public class NavigationPageController {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("graphStatistic.fxml"));
 
         AnchorPane rootLayout = fxmlLoader.load();
-        Scene scene = new Scene(rootLayout, GraphStatisticController.GRAPH_STATISTIC_PAGE_W,
-                GraphStatisticController.GRAPH_STATISTIC_PAGE_H);
+        Scene scene = new Scene(rootLayout, CursorController.GRAPH_STATISTIC_PAGE_W,
+                CursorController.GRAPH_STATISTIC_PAGE_H);
         root.setScene(scene);
-        GraphStatisticController controller = fxmlLoader.getController();
+        CursorController controller = fxmlLoader.getController();
+        controller.setRoot(root);
+    }
+
+    public void goToArticles() throws IOException {
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("articlesPage.fxml"));
+        AnchorPane rootLayout = fxmlLoader.load();
+        Scene scene = new Scene(rootLayout, ArticlesController.ARTICLES_PAGE_W,
+                ArticlesController.ARTICLES_PAGE_H);
+        root.setScene(scene);
+        ArticlesController controller = fxmlLoader.getController();
         controller.setRoot(root);
     }
 
